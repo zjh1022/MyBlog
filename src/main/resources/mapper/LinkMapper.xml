@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjh.myblog.mapper.LinkMapper">
+  <resultMap id="BaseResultMap" type="com.zjh.myblog.entity.Link">
+    <!--@mbg.generated-->
+    <!--@Table link-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="header_img" jdbcType="VARCHAR" property="headerImg" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="display" jdbcType="TINYINT" property="display" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="weight" jdbcType="BIGINT" property="weight" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="delete_by" jdbcType="VARCHAR" property="deleteBy" />
+    <result column="delete_time" jdbcType="TIMESTAMP" property="deleteTime" />
+    <result column="support" jdbcType="TINYINT" property="support" />
+  </resultMap>
+
+  <sql id="selectLinkVo">
+    select id, title, url, description, header_img, status, display, email, weight, create_by, create_time  from link where delete_time is null
+  </sql>
+
+  <select id="selectLinkList" resultMap="BaseResultMap">
+    <include refid="selectLinkVo"/>
+    <if test="title != null and title != ''">
+      AND title like concat('%', #{title}, '%')
+    </if>
+    <if test="email != null and email != ''">
+      AND email like concat('%', #{email}, '%')
+    </if>
+    <if test="display != null and display != ''">
+      AND display =#{display}
+    </if>
+    <if test="status != null and status != ''">
+      AND status =#{status}
+    </if>
+    <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+      and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+    </if>
+    <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+      and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+    </if>
+  </select>
+
+  <select id="selectLinkById" parameterType="Long" resultMap="BaseResultMap">
+    <include refid="selectLinkVo"/>
+    and id = #{id}
+  </select>
+
+  <insert id="insertLink" useGeneratedKeys="true"
+          keyProperty="id">
+    insert into link
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="title != null  and title != ''">title,</if>
+      <if test="url != null  and url != ''">url,</if>
+      <if test="description != null  and description != ''">description,</if>
+      <if test="headerImg != null  and headerImg != ''">header_img,</if>
+      <if test="status != null ">status,</if>
+      <if test="display != null ">display,</if>
+      <if test="email != null  and email != ''">email,</if>
+      <if test="weight != null ">weight,</if>
+      <if test="createBy != null  and createBy != ''">create_by,</if>
+      create_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="title != null  and title != ''">#{title},</if>
+      <if test="url != null  and url != ''">#{url},</if>
+      <if test="description != null  and description != ''">#{description},</if>
+      <if test="headerImg != null  and headerImg != ''">#{headerImg},</if>
+      <if test="status != null ">#{status},</if>
+      <if test="display != null ">#{display},</if>
+      <if test="email != null  and email != ''">#{email},</if>
+      <if test="weight != null ">#{weight},</if>
+      <if test="createBy != null  and createBy != ''">#{createBy},</if>
+      sysdate()
+    </trim>
+  </insert>
+
+  <update id="updateLink">
+    update link
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="title != null  and title != ''">title = #{title},</if>
+      <if test="url != null  and url != ''">url = #{url},</if>
+      <if test="description != null  and description != ''">description = #{description},</if>
+      <if test="headerImg != null  and headerImg != ''">header_img = #{headerImg},</if>
+      <if test="status != null ">status = #{status},</if>
+      <if test="display != null ">display = #{display},</if>
+      <if test="email != null  and email != ''">email = #{email},</if>
+      <if test="weight != null ">weight = #{weight},</if>
+      <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+      update_time = sysdate()
+    </trim>
+    where id = #{id}
+  </update>
+
+  <delete id="deleteLinkById">
+    update link set delete_time = sysdate(), delete_by =#{username} where id = #{id}
+  </delete>
+
+  <delete id="deleteLinkByIds">
+    update link set delete_time = sysdate() , delete_by =#{username} where id in
+    <foreach item="id" collection="ids" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+</mapper>

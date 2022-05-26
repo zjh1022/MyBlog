@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjh.myblog.mapper.VisitLogMapper">
+  <resultMap id="BaseResultMap" type="com.zjh.myblog.entity.VisitLog">
+    <!--@mbg.generated-->
+    <!--@Table visit_log-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="page_id" jdbcType="LONGVARCHAR" property="pageId" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="browser" jdbcType="VARCHAR" property="browser" />
+    <result column="os" jdbcType="VARCHAR" property="os" />
+    <result column="entry_url" jdbcType="VARCHAR" property="entryUrl" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="error_msg" jdbcType="VARCHAR" property="errorMsg" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="spider" jdbcType="VARCHAR" property="spider" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="delete_time" jdbcType="TIMESTAMP" property="deleteTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="delete_by" jdbcType="VARCHAR" property="deleteBy" />
+  </resultMap>
+  <insert id="insertVisitLog" parameterType="com.zjh.myblog.entity.VisitLog">
+    insert into visit_log(
+    <if test="ip!=null and ip!=''">ip,</if>
+    <if test="location!=null and location!=''">location,</if>
+    <if test="browser!=null and browser!=''">browser,</if>
+    <if test="os!=null and os!=''">os,</if>
+    <if test="url!=null and url!=''">url,</if>
+    <if test="pageId !=null">page_id,</if>
+    <if test="errorMsg!=null and errorMsg!=''">error_msg,</if>
+    <if test="spider!=null and spider!=''">spider,</if>
+    <if test="status!=null and status!=''">status,</if>
+    <if test="title!=null and title!=''">title,</if>
+    <if test="entryUrl!=null and entryUrl!=''">entry_url,</if>
+    create_time)
+    values (
+    <if test="ip!=null and ip!=''">#{ip},</if>
+    <if test="location!=null and location!=''">#{location},</if>
+    <if test="browser!=null and browser!=''">#{browser},</if>
+    <if test="os!=null and os!=''">#{os},</if>
+    <if test="url!=null and url!=''">#{url},</if>
+    <if test="pageId!=null ">#{pageId},</if>
+    <if test="errorMsg!=null and errorMsg!=''">#{errorMsg},</if>
+    <if test="spider!=null and spider!=''">#{spider},</if>
+    <if test="status!=null and status!=''">#{status},</if>
+    <if test="title!=null and title!=''">#{title},</if>
+    <if test="entryUrl!=null and entryUrl!=''">#{entryUrl},</if>
+    sysdate()
+    )
+  </insert>
+
+  <select id="selectVisitLogList" parameterType="com.zjh.myblog.entity.VisitLog"
+          resultMap="BaseResultMap">
+    select id, ip, location, browser, os, title,status, error_msg,spider,url, create_time,page_id from visit_log
+    where delete_time is null
+    <if test="ip != null and ip != ''">
+      AND ip like concat('%', #{ip}, '%')
+    </if>
+    <if test="location != null and location != ''">
+      AND location like concat('%', #{location}, '%')
+    </if>
+
+    <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+      and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+    </if>
+    <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+      and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+    </if>
+  </select>
+
+  <delete id="deleteVisitLogByIds">
+    update visit_log set delete_by = #{username},delete_time =sysdate() where id in
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+  <update id="cleanVisitLog">
+    update visit_log
+    set delete_by   = #{username},
+    delete_time =sysdate()
+  </update>
+
+  <update id="updateVisitLog">
+    update visit_log
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="ip != null ">ip = #{ip},</if>
+      <if test="location != null  and location != ''">location = #{location},</if>
+      <if test="browser != null  and browser != ''">browser = #{browser},</if>
+      <if test="os != null  and os != ''">os = #{os},</if>
+      <if test="pageId != null  and pageId != ''">page_id = #{pageId},</if>
+      <if test="errorMsg != null  and errorMsg != ''">error_msg = #{errorMsg},</if>
+      <if test="spider != null  and spider != ''">spider = #{spider},</if>
+      <if test="status != null ">status = #{status},</if>
+      <if test="title != null ">title = #{title},</if>
+    </trim>
+    where id = #{id}
+  </update>
+
+</mapper>
