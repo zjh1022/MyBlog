@@ -41,13 +41,13 @@ public class QiNiuContentService{
 
 
 
-    private static final String accessKey="fUGyAPKgr_-xLs25Wy1JF3noyxl9Rq64b8x-8Air";
+    private static final String accessKey="你的accessKey";
 
-    private static final String secretKey="6GY1Np260T7YFv3BtZi-FpmhQ1zwG1oysiw8U6on";
+    private static final String secretKey="你的secretKey";
 
-    private static final String bucket="zjh888";
+    private static final String bucket="你的bucket";
 
-    private static final String host="image.yixingyuntech.com";
+    private static final String host="你创建的域名地址";
 
 
     /**
