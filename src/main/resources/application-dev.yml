@@ -6,7 +6,7 @@ spring:
     druid:
       url: jdbc:mysql://localhost:3306/blog2?useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Shanghai
       username: root
-      password: xiaoHAI123.
+      password: 
       # 初始连接数
       initialSize: 5
       # 最小连接池数量
